@@ -1,0 +1,12 @@
+{:deps
+ {org.clojure/clojure     {:mvn/version "1.12.3"}
+  ring/ring-core          {:mvn/version "1.15.3"}
+  ring/ring-jetty-adapter {:mvn/version "1.15.3"}
+  compojure/compojure     {:mvn/version "1.7.2"}}
+
+ :paths
+ ["src"]
+
+ :aliases
+ {:serve
+  {:main-opts ["-m" "io.djy.hypermedia-systems.main"]}}}
