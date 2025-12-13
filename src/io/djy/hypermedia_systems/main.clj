@@ -12,9 +12,14 @@
 (defroutes app
   (GET "/" _req (res/redirect "/contacts"))
   (GET "/contacts" req (contacts/list-contacts req))
-  (GET "/contacts/:id" [id] (if (= "new" id)
-                              (contacts/new-contact-form)
-                              (contacts/view-contact id)))
+  (GET "/contacts/:id"
+       {:keys [route-params] :as req}
+       (if (= "new" (:id route-params))
+         (contacts/new-contact-form)
+         (contacts/view-contact req)))
+  (GET "/contacts/:id/edit" [id] (contacts/edit-contact-form id))
+  (POST "/contacts/:id/edit" req (contacts/edit-contact! req))
+  (POST "/contacts/:id/delete" [id] (contacts/delete-contact! id))
   (POST "/contacts/new" req (contacts/new-contact! req))
   (route/not-found "Page not found"))
 
