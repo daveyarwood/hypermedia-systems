@@ -3,14 +3,14 @@
     [compojure.core                     :refer [defroutes GET POST]]
     [compojure.route                    :as    route]
     [io.djy.hypermedia-systems.contacts :as    contacts]
-    [io.djy.hypermedia-systems.http     :as    http]
     [ring.adapter.jetty                 :refer [run-jetty]]
     [ring.middleware.flash              :refer [wrap-flash]]
     [ring.middleware.params             :refer [wrap-params]]
-    [ring.middleware.session            :refer [wrap-session]]))
+    [ring.middleware.session            :refer [wrap-session]]
+    [ring.util.response                 :as    res]))
 
 (defroutes app
-  (GET "/" _req (http/redirect-to "/contacts"))
+  (GET "/" _req (res/redirect "/contacts"))
   (GET "/contacts" req (contacts/list-contacts req))
   (GET "/contacts/new" _req (contacts/new-contact-form))
   (POST "/contacts/new" req (contacts/new-contact! req))
