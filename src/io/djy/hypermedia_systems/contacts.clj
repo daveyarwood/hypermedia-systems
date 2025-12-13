@@ -162,7 +162,7 @@
 (defn view-contact
   [id-str]
   (let [id
-        (Integer/parseInt id-str)
+        (parse-long id-str)
 
         {:keys [first-name last-name email phone] :as contact}
         (first (filter #(= (:id %) id) @fake-contacts))]
