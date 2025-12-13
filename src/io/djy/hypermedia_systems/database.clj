@@ -1,6 +1,10 @@
 (ns io.djy.hypermedia-systems.database
   (:require [clojure.string :as str]))
 
+(defn- simulate-db-delay
+  []
+  (Thread/sleep 200))
+
 ;; If this were a real system, we'd be querying a database.
 (def ^:private fake-contacts
   (atom
@@ -32,6 +36,7 @@
 
 (defn list-contacts
   [& [search]]
+  (simulate-db-delay)
   (if search
     (filter
       (fn [contact]
@@ -44,16 +49,19 @@
 
 (defn get-contact
   [id]
+  (simulate-db-delay)
   (first (filter #(= (get % "id") id) @fake-contacts)))
 
 (defn create-contact!
   [contact]
+  (simulate-db-delay)
   (swap!
     fake-contacts
     #(concat % [(merge contact {"id" (inc (count %))})])))
 
 (defn update-contact!
   [id updated-contact]
+  (simulate-db-delay)
   (swap!
     fake-contacts
     #(map
@@ -65,6 +73,7 @@
 
 (defn delete-contact!
   [id]
+  (simulate-db-delay)
   (swap!
     fake-contacts
     #(filter
