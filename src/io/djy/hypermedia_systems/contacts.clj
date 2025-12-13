@@ -71,19 +71,18 @@
 (defn list-contacts
   [{:keys [query-params flash]}]
   (let [{:strs [q]} query-params]
-    (str
-      (layout/page
-        [:h1 "Contacts"]
-        (when flash
-          (list
-            [:hr]
-            [:em {:class "flash"} flash]
-            [:hr]))
-        (search-form q)
-        [:hr]
-        (contacts-table q)
-        [:hr]
-        [:p [:a {:href "/contacts/new"} "Add Contact"]]))))
+    (layout/page
+      [:h1 "Contacts"]
+      (when flash
+        (list
+          [:hr]
+          [:em {:class "flash"} flash]
+          [:hr]))
+      (search-form q)
+      [:hr]
+      (contacts-table q)
+      [:hr]
+      [:p [:a {:href "/contacts/new"} "Add Contact"]])))
 
 (defn new-contact-form
   [& [{:keys [email first-name last-name phone errors]}]]
