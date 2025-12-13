@@ -158,3 +158,24 @@
         (merge
           (res/redirect "/contacts" :see-other)
           {:flash "Contact created successfully."})))))
+
+(defn view-contact
+  [id-str]
+  (let [id
+        (Integer/parseInt id-str)
+
+        {:keys [first-name last-name email phone] :as contact}
+        (first (filter #(= (:id %) id) @fake-contacts))]
+    (if contact
+      (layout/page
+        [:h1 (format "%s %s" first-name last-name)]
+        [:div
+         [:div "Phone: " phone]
+         [:div "Email: " email]]
+        [:p [:a {:href (format "/contacts/%d/edit" id)} "Edit"]]
+        [:p [:a {:href "/contacts"} "Back"]])
+      (res/not-found
+        (layout/page
+          [:h1 "Contact Not Found"]
+          [:p "The contact you are looking for does not exist."]
+          [:p [:a {:href "/contacts"} "Back"]])))))
