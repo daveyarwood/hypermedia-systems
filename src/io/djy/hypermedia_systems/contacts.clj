@@ -81,8 +81,26 @@
           [:p "The contact you are looking for does not exist."]
           [:p [:a {:href "/contacts"} "Back"]])))))
 
+(defn- validate-email-impl
+  [id email]
+  (let [existing-contact (->> (db/list-contacts)
+                              (filter
+                                (fn [{contact-id "id" contact-email "email"}]
+                                  (and (= email contact-email)
+                                       (not= id contact-id))))
+                              first)]
+    (if existing-contact
+      "Email is already in use."
+      "")))
+
+(defn validate-email
+  [{:keys [route-params query-params]}]
+  (let [id               (maybe-parse-long (:id route-params))
+        {:strs [email]}  query-params]
+    (validate-email-impl id email)))
+
 (defn- contact-form
-  [action & [{:strs [email first-name last-name phone]
+  [action & [{:strs [id email first-name last-name phone]
               :keys [errors]}]]
   [:form {:action action :method "post"}
    [:fieldset
@@ -94,7 +112,9 @@
        :name        "email"
        :type        "email"
        :placeholder "Email"
-       :value       (or email "")}]
+       :value       (or email "")
+       :hx-get      (format "/contacts/%s/validate-email" (or id "new"))
+       :hx-target   "next .error"}]
      [:span {:class "error"} (:email errors)]]
     [:p
      [:label {:for "first-name"} "First Name"]
@@ -133,16 +153,19 @@
     [:p [:a {:href "/contacts"} "Back"]]))
 
 (defn- validate-contact
-  [{:strs [email first-name last-name phone]}]
-  (cond-> {}
-    (str/blank? email)
-    (assoc :email "Email is required.")
-    (str/blank? first-name)
-    (assoc :first-name "First name is required.")
-    (str/blank? last-name)
-    (assoc :last-name "Last name is required.")
-    (str/blank? phone)
-    (assoc :phone "Phone is required.")))
+  [{:strs [id email first-name last-name phone]}]
+  (let [email-error (validate-email-impl id email)]
+    (cond-> {}
+      (str/blank? email)
+      (assoc :email "Email is required.")
+      (seq email-error)
+      (assoc :email email-error)
+      (str/blank? first-name)
+      (assoc :first-name "First name is required.")
+      (str/blank? last-name)
+      (assoc :last-name "Last name is required.")
+      (str/blank? phone)
+      (assoc :phone "Phone is required."))))
 
 (defn new-contact!
   [{:keys [form-params]}]
