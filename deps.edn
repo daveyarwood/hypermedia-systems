@@ -6,7 +6,7 @@
   hiccup/hiccup           {:mvn/version "2.0.0"}}
 
  :paths
- ["src"]
+ ["src" "resources"]
 
  :aliases
  {:serve

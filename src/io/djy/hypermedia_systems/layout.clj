@@ -7,5 +7,6 @@
     {:lang "en"}
     [:head
      [:meta {:charset "utf-8"}]
-     [:title "Contact.app"]]
+     [:title "Contact.app"]
+     [:script {:src "/js/htmx-2.0.8.min.js"}]]
     [:body content]))

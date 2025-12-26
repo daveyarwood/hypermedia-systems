@@ -6,6 +6,7 @@
     [ring.adapter.jetty                 :refer [run-jetty]]
     [ring.middleware.flash              :refer [wrap-flash]]
     [ring.middleware.params             :refer [wrap-params]]
+    [ring.middleware.resource           :refer [wrap-resource]]
     [ring.middleware.session            :refer [wrap-session]]
     [ring.util.response                 :as    res]))
 
@@ -24,7 +25,11 @@
   (route/not-found "Page not found"))
 
 (def handler
-  (-> app wrap-params wrap-flash wrap-session))
+  (-> app
+      (wrap-resource "public")
+      wrap-params
+      wrap-flash
+      wrap-session))
 
 (defn -main
   [& [port]]
