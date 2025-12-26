@@ -23,39 +23,39 @@
   [{:keys [query-params]}]
   (let [{:strs [page]} query-params
         contacts       (db/list-contacts query-params)]
-    (list
-      [:table
-       [:thead
+    [:table
+     [:thead
+      [:tr
+       [:th "First Name"]
+       [:th "Last Name"]
+       [:th "Phone"]
+       [:th "Email"]]]
+     [:tbody
+      (for [{:strs [id first-name last-name phone email]} contacts]
         [:tr
-         [:th "First Name"]
-         [:th "Last Name"]
-         [:th "Phone"]
-         [:th "Email"]]]
-       [:tbody
-        (for [{:strs [id first-name last-name phone email]} contacts]
-          [:tr
-           [:td first-name]
-           [:td last-name]
-           [:td phone]
-           [:td email]
-           [:td
-            [:a {:href (format "/contacts/%d/edit" id)} "Edit"]
-            " "
-            [:a {:href (format "/contacts/%d" id)} "View"]]])]]
-      [:div
-       (let [adjust-page-number
-             (fn [f]
-               (str
-                 "/contacts?"
-                 (-> query-params
-                     (merge {"page" (str (f (or (maybe-parse-long page) 1)))})
-                     codec/form-encode)))]
-         [:span {:style "float: right"}
-          (when (and page (> (parse-long page) 1))
-            [:a {:href (adjust-page-number dec)} "Previous"])
+         [:td first-name]
+         [:td last-name]
+         [:td phone]
+         [:td email]
+         [:td
+          [:a {:href (format "/contacts/%d/edit" id)} "Edit"]
           " "
-          (when (= db/page-size (count contacts))
-            [:a {:href (adjust-page-number inc)} "Next"])])])))
+          [:a {:href (format "/contacts/%d" id)} "View"]]])
+      (when (= db/page-size (count contacts))
+        [:tr]
+        [:td {:col-span "5" :style "text-align: center"}
+         [:button
+          {:hx-target "closest tr"
+           :hx-swap   "outerHTML"
+           :hx-select "tbody > tr"
+           :hx-get    (str
+                        "/contacts?"
+                        (-> query-params
+                            (merge
+                              {"page"
+                               (str (inc (or (maybe-parse-long page) 1)))})
+                            codec/form-encode))}
+          "Load More"]])]]))
 
 (defn list-contacts
   [{:keys [query-params flash] :as req}]
