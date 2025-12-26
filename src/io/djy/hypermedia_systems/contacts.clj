@@ -115,7 +115,7 @@
        :value       (or email "")
        :hx-get      (format "/contacts/%s/validate-email" (or id "new"))
        :hx-target   "next .error"
-       :hx-trigger  "change, keyup delay:200ms"}]
+       :hx-trigger  "change, keyup delay:200ms changed"}]
      [:span {:class "error"} (:email errors)]]
     [:p
      [:label {:for "first-name"} "First Name"]
