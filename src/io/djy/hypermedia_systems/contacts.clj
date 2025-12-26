@@ -167,8 +167,11 @@
     (layout/page
       [:h1 "Edit Contact"]
       (contact-form (format "/contacts/%d/edit" id) form-state)
-      [:form {:action (format "/contacts/%d/delete" id) :method "post"}
-       [:button "Delete Contact"]]
+      [:button
+       {:hx-delete   (format "/contacts/%d" id)
+        :hx-target   "body"
+        :hx-push-url "true"}
+       "Delete Contact"]
       [:p [:a {:href "/contacts"} "Back"]])))
 
 (defn edit-contact!
