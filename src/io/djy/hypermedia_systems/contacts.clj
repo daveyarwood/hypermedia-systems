@@ -170,7 +170,8 @@
       [:button
        {:hx-delete   (format "/contacts/%d" id)
         :hx-target   "body"
-        :hx-push-url "true"}
+        :hx-push-url "true"
+        :hx-confirm  "Are you sure you want to delete this contact?"}
        "Delete Contact"]
       [:p [:a {:href "/contacts"} "Back"]])))
 
