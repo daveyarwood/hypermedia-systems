@@ -201,9 +201,11 @@
 (defn edit-contact!
   [{:keys [route-params form-params]}]
   (let [id      (maybe-parse-long (:id route-params))
-        contact (select-keys
-                  form-params
-                  ["email" "first-name" "last-name" "phone"])
+        contact (merge
+                  (select-keys
+                    form-params
+                    ["email" "first-name" "last-name" "phone"])
+                  {"id" id})
         errors  (validate-contact contact)]
     (if (seq errors)
       ;; Render the form again with errors
