@@ -3,6 +3,7 @@
     [clojure.string                     :as str]
     [io.djy.hypermedia-systems.database :as db]
     [io.djy.hypermedia-systems.layout   :as layout]
+    [ring.util.codec                    :as codec]
     [ring.util.response                 :as res]))
 
 (defn- maybe-parse-long
@@ -19,28 +20,45 @@
    [:input {:type "submit" :value "Search"}]])
 
 (defn- contacts-table
-  [q]
-  [:table
-   [:thead
-    [:tr
-     [:th "First Name"]
-     [:th "Last Name"]
-     [:th "Phone"]
-     [:th "Email"]]]
-   [:tbody
-    (for [{:strs [id first-name last-name phone email]} (db/list-contacts q)]
-      [:tr
-       [:td first-name]
-       [:td last-name]
-       [:td phone]
-       [:td email]
-       [:td
-        [:a {:href (format "/contacts/%d/edit" id)} "Edit"]
-        " "
-        [:a {:href (format "/contacts/%d" id)} "View"]]])]])
+  [{:keys [query-params]}]
+  (let [{:strs [page]} query-params
+        contacts       (db/list-contacts query-params)]
+    (list
+      [:table
+       [:thead
+        [:tr
+         [:th "First Name"]
+         [:th "Last Name"]
+         [:th "Phone"]
+         [:th "Email"]]]
+       [:tbody
+        (for [{:strs [id first-name last-name phone email]} contacts]
+          [:tr
+           [:td first-name]
+           [:td last-name]
+           [:td phone]
+           [:td email]
+           [:td
+            [:a {:href (format "/contacts/%d/edit" id)} "Edit"]
+            " "
+            [:a {:href (format "/contacts/%d" id)} "View"]]])]]
+      [:div
+       (let [adjust-page-number
+             (fn [f]
+               (str
+                 "/contacts?"
+                 (-> query-params
+                     (merge {"page" (str (f (or (maybe-parse-long page) 1)))})
+                     codec/form-encode)))]
+         [:span {:style "float: right"}
+          (when (and page (> (parse-long page) 1))
+            [:a {:href (adjust-page-number dec)} "Previous"])
+          " "
+          (when (= db/page-size (count contacts))
+            [:a {:href (adjust-page-number inc)} "Next"])])])))
 
 (defn list-contacts
-  [{:keys [query-params flash]}]
+  [{:keys [query-params flash] :as req}]
   (let [{:strs [q]} query-params]
     (layout/page
       [:h1 "Contacts"]
@@ -51,7 +69,7 @@
           [:hr]))
       (search-form q)
       [:hr]
-      (contacts-table q)
+      (contacts-table req)
       [:hr]
       [:p [:a {:href "/contacts/new"} "Add Contact"]])))
 
@@ -83,7 +101,7 @@
 
 (defn- validate-email-impl
   [id email]
-  (let [existing-contact (->> (db/list-contacts)
+  (let [existing-contact (->> (db/list-contacts {})
                               (filter
                                 (fn [{contact-id "id" contact-email "email"}]
                                   (and (= email contact-email)

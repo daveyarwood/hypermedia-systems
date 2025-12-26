@@ -159,18 +159,24 @@
       "phone"      "555-0130"
       "email"      "james.smith@example.com"}]))
 
+(def page-size 10)
+
 (defn list-contacts
-  [& [search]]
+  [{:strs [q page]}]
   (simulate-db-delay)
-  (if search
+  (cond->> @fake-contacts
+    q
     (filter
       (fn [contact]
         (some #(str/includes?
                  (str/lower-case (str (get contact %)))
-                 (str/lower-case search))
-              ["first-name" "last-name" "phone" "email"]))
-      @fake-contacts)
-    @fake-contacts))
+                 (str/lower-case q))
+              ["first-name" "last-name" "phone" "email"])))
+    page
+    (drop (* page-size (dec (parse-long page))))
+
+    true
+    (take page-size)))
 
 (defn get-contact
   [id]
