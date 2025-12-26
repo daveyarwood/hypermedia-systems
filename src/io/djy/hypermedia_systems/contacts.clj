@@ -114,7 +114,8 @@
        :placeholder "Email"
        :value       (or email "")
        :hx-get      (format "/contacts/%s/validate-email" (or id "new"))
-       :hx-target   "next .error"}]
+       :hx-target   "next .error"
+       :hx-trigger  "change, keyup"}]
      [:span {:class "error"} (:email errors)]]
     [:p
      [:label {:for "first-name"} "First Name"]
