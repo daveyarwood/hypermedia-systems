@@ -43,7 +43,7 @@
           [:a {:href (format "/contacts/%d" id)} "View"]]])
       (when (= db/page-size (count contacts))
         [:tr]
-        [:td {:col-span "5" :style "text-align: center"}
+        [:td {:colspan "5" :style "text-align: center"}
          [:button
           {:hx-target "closest tr"
            :hx-swap   "outerHTML"
