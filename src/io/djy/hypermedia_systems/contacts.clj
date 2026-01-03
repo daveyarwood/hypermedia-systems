@@ -23,7 +23,8 @@
      :value       (or q "")
      :hx-get      "/contacts"
      :hx-trigger  "search, keyup delay:200ms changed"
-     :hx-target   "tbody"}]
+     :hx-target   "tbody"
+     :hx-push-url "true"}]
    [:input {:type "submit" :value "Search"}]])
 
 (defn- contact-rows
