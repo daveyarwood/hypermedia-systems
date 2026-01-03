@@ -44,18 +44,19 @@
       (when (= db/page-size (count contacts))
         [:tr]
         [:td {:colspan "5" :style "text-align: center"}
-         [:button
-          {:hx-target "closest tr"
-           :hx-swap   "outerHTML"
-           :hx-select "tbody > tr"
-           :hx-get    (str
-                        "/contacts?"
-                        (-> query-params
-                            (merge
-                              {"page"
-                               (str (inc (or (maybe-parse-long page) 1)))})
-                            codec/form-encode))}
-          "Load More"]])]]))
+         [:span
+          {:hx-target  "closest tr"
+           :hx-trigger "revealed"
+           :hx-swap    "outerHTML"
+           :hx-select  "tbody > tr"
+           :hx-get     (str
+                         "/contacts?"
+                         (-> query-params
+                             (merge
+                               {"page"
+                                (str (inc (or (maybe-parse-long page) 1)))})
+                             codec/form-encode))}
+          [:em "Loading more..."]]])]]))
 
 (defn list-contacts
   [{:keys [query-params flash] :as req}]
