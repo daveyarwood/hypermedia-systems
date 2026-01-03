@@ -21,15 +21,15 @@
 (def page-size 10)
 
 (defn list-contacts
-  [{:strs [q page]}]
+  [query page]
   (simulate-db-delay)
   (cond->> @fake-contacts
-    q
+    query
     (filter
       (fn [contact]
         (some #(str/includes?
                  (str/lower-case (str (get contact %)))
-                 (str/lower-case q))
+                 (str/lower-case query))
               ["first-name" "last-name" "phone" "email"])))
     page
     (drop (* page-size (dec (parse-long page))))

@@ -14,23 +14,22 @@
 
 (defn- search-form
   [q]
-  [:form {:action "/contacts" :method "get"}
+  [:form {:action "/contacts" :method "get" :class "tool-bar"}
    [:label {:for "search"} "Search Term"]
-   [:input {:id "search" :type "search" :name "q" :value (or q "")}]
+   [:input
+    {:id          "search"
+     :type        "search"
+     :name        "q"
+     :value       (or q "")
+     :hx-get      "/contacts"
+     :hx-trigger  "search, keyup delay:200ms changed"
+     :hx-target   "tbody"}]
    [:input {:type "submit" :value "Search"}]])
 
-(defn- contacts-table
-  [{:keys [query-params]}]
-  (let [{:strs [page]} query-params
-        contacts       (db/list-contacts query-params)]
-    [:table
-     [:thead
-      [:tr
-       [:th "First Name"]
-       [:th "Last Name"]
-       [:th "Phone"]
-       [:th "Email"]]]
-     [:tbody
+(defn- contact-rows
+  [{:keys [query-params]} contacts]
+  (let [{:strs [page]} query-params]
+    (concat
       (for [{:strs [id first-name last-name phone email]} contacts]
         [:tr
          [:td first-name]
@@ -42,37 +41,57 @@
           " "
           [:a {:href (format "/contacts/%d" id)} "View"]]])
       (when (= db/page-size (count contacts))
-        [:tr]
-        [:td {:colspan "5" :style "text-align: center"}
-         [:span
-          {:hx-target  "closest tr"
-           :hx-trigger "revealed"
-           :hx-swap    "outerHTML"
-           :hx-select  "tbody > tr"
-           :hx-get     (str
-                         "/contacts?"
-                         (-> query-params
-                             (merge
-                               {"page"
-                                (str (inc (or (maybe-parse-long page) 1)))})
-                             codec/form-encode))}
-          [:em "Loading more..."]]])]]))
+        (list
+          [:tr]
+          [:td {:colspan "5" :style "text-align: center"}
+           [:span
+            {:hx-target  "closest tr"
+             :hx-trigger "revealed"
+             :hx-swap    "outerHTML"
+             :hx-select  "tbody > tr"
+             :hx-get     (str
+                           "/contacts?"
+                           (-> query-params
+                               (merge
+                                 {"page"
+                                  (str (inc (or (maybe-parse-long page) 1)))})
+                               codec/form-encode))}
+            [:em "Loading more..."]]])))))
+
+(defn- contacts-table
+  [req contacts]
+  [:table
+   [:thead
+    [:tr
+     [:th "First Name"]
+     [:th "Last Name"]
+     [:th "Phone"]
+     [:th "Email"]]]
+   [:tbody
+    (contact-rows req contacts)]])
 
 (defn list-contacts
-  [{:keys [query-params flash] :as req}]
-  (let [{:strs [q]} query-params]
-    (layout/page
-      [:h1 "Contacts"]
-      (when flash
-        (list
-          [:hr]
-          [:em {:class "flash"} flash]
-          [:hr]))
-      (search-form q)
-      [:hr]
-      (contacts-table req)
-      [:hr]
-      [:p [:a {:href "/contacts/new"} "Add Contact"]])))
+  [{:keys [headers query-params flash] :as req}]
+  (let [{:strs [hx-trigger]} headers
+        {:strs [q page]}     query-params
+        contacts             (db/list-contacts q page)]
+    (if (= "search" hx-trigger)
+      ;; Return only the table rows for htmx "active search" requests
+      (layout/html
+        (contact-rows req contacts))
+      ;; Otherwise, return the entire page
+      (layout/page
+        [:h1 "Contacts"]
+        (when flash
+          (list
+            [:hr]
+            [:em {:class "flash"} flash]
+            [:hr]))
+        (search-form q)
+        [:hr]
+        (contacts-table req contacts)
+        [:hr]
+        [:p [:a {:href "/contacts/new"} "Add Contact"]]))))
 
 (defn view-contact
   [{:keys [route-params flash]}]
@@ -102,7 +121,7 @@
 
 (defn- validate-email-impl
   [id email]
-  (let [existing-contact (->> (db/list-contacts {})
+  (let [existing-contact (->> (db/list-contacts nil nil)
                               (filter
                                 (fn [{contact-id "id" contact-email "email"}]
                                   (and (= email contact-email)

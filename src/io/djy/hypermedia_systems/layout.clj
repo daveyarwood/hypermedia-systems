@@ -1,5 +1,11 @@
 (ns io.djy.hypermedia-systems.layout
-  (:require [hiccup.page :as p]))
+  (:require
+    [hiccup2.core :as h]
+    [hiccup.page  :as p]))
+
+(defn html
+  [& content]
+  (str (h/html content)))
 
 (defn page
   [& content]
