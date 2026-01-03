@@ -5,7 +5,7 @@
 
 (defn- simulate-db-delay
   []
-  (Thread/sleep 200))
+  (Thread/sleep 500))
 
 ;; If this were a real system, we'd be querying a database.
 (def ^:private fake-contacts

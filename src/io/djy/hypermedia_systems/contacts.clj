@@ -17,14 +17,21 @@
   [:form {:action "/contacts" :method "get" :class "tool-bar"}
    [:label {:for "search"} "Search Term"]
    [:input
-    {:id          "search"
-     :type        "search"
-     :name        "q"
-     :value       (or q "")
-     :hx-get      "/contacts"
-     :hx-trigger  "search, keyup delay:200ms changed"
-     :hx-target   "tbody"
-     :hx-push-url "true"}]
+    {:id           "search"
+     :type         "search"
+     :name         "q"
+     :value        (or q "")
+     :hx-get       "/contacts"
+     :hx-trigger   "search, keyup delay:200ms changed"
+     :hx-target    "tbody"
+     :hx-push-url  "true"
+     :hx-indicator "#spinner"}]
+   [:img
+    {:id    "spinner"
+     :class "htmx-indicator"
+     :src   "/img/spinner.gif"
+     :alt   "Loading..."
+     :style "width: 30px; height: 30px"}]
    [:input {:type "submit" :value "Search"}]])
 
 (defn- contact-rows
