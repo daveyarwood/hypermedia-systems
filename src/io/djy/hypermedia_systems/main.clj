@@ -26,12 +26,24 @@
   (POST "/contacts/new" req (contacts/new-contact! req))
   (route/not-found "Page not found"))
 
+(defn- wrap-handle-exceptions
+  [handler]
+  (fn [req]
+    (try
+      (handler req)
+      (catch Exception e
+        (println e)
+        (format
+          "<h1>Internal Server Error</h1><p>An unexpected error occurred:%s</p>"
+          (.getMessage e))))))
+
 (def handler
   (-> app
       (wrap-resource "public")
       wrap-params
       wrap-flash
-      wrap-session))
+      wrap-session
+      wrap-handle-exceptions))
 
 (defn -main
   [& [port]]
