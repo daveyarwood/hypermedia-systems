@@ -14,5 +14,6 @@
     [:head
      [:meta {:charset "utf-8"}]
      [:title "Contact.app"]
+     [:link {:rel "stylesheet" :href "/css/style.css"}]
      [:script {:src "/js/htmx-2.0.8.min.js"}]]
     [:body {:hx-boost "true"} content]))
