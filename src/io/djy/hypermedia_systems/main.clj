@@ -21,8 +21,8 @@
   (DELETE "/contacts/:id" [id] (contacts/delete-contact! id))
   (GET "/contacts/:id/edit" [id] (contacts/edit-contact-form id))
   (POST "/contacts/:id/edit" req (contacts/edit-contact! req))
-  (POST "/contacts/new" req (contacts/new-contact! req))
   (GET "/contacts/:id/validate-email" req (contacts/validate-email req))
+  (POST "/contacts/new" req (contacts/new-contact! req))
   (route/not-found "Page not found"))
 
 (def handler
