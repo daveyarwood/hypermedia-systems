@@ -12,6 +12,18 @@
     (parse-long x)
     x))
 
+(def ^:private spinner
+  [:img
+   {:id    "spinner"
+    :class "htmx-indicator"
+    :src   "/img/spinner.gif"
+    :alt   "Loading..."
+    :style "width: 30px; height: 30px"}])
+
+(defn count-contacts
+  []
+  (format "(%d total contacts)" (db/count-contacts)))
+
 (defn- search-form
   [q]
   [:form {:action "/contacts" :method "get" :class "tool-bar"}
@@ -26,12 +38,7 @@
      :hx-target    "tbody"
      :hx-push-url  "true"
      :hx-indicator "#spinner"}]
-   [:img
-    {:id    "spinner"
-     :class "htmx-indicator"
-     :src   "/img/spinner.gif"
-     :alt   "Loading..."
-     :style "width: 30px; height: 30px"}]
+   spinner
    [:input {:type "submit" :value "Search"}]])
 
 (defn- contact-rows
@@ -99,7 +106,12 @@
         [:hr]
         (contacts-table req contacts)
         [:hr]
-        [:p [:a {:href "/contacts/new"} "Add Contact"]]))))
+        [:p
+         [:a {:href "/contacts/new"} "Add Contact"]
+         " "
+         [:span
+          {:hx-get "/contacts/count" :hx-trigger "revealed"}
+          spinner]]))))
 
 (defn view-contact
   [{:keys [route-params flash]}]

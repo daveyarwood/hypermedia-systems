@@ -4,8 +4,8 @@
             [clojure.string   :as str]))
 
 (defn- simulate-db-delay
-  []
-  (Thread/sleep 500))
+  [& [amount]]
+  (Thread/sleep (or amount 500)))
 
 ;; If this were a real system, we'd be querying a database.
 (def ^:private fake-contacts
@@ -19,6 +19,11 @@
                rows))))))
 
 (def page-size 10)
+
+(defn count-contacts
+  []
+  (simulate-db-delay 3000)
+  (count @fake-contacts))
 
 (defn list-contacts
   [query page]

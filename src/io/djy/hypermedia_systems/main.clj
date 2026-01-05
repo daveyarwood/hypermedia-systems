@@ -15,8 +15,9 @@
   (GET "/contacts" req (contacts/list-contacts req))
   (GET "/contacts/:id"
        {:keys [route-params] :as req}
-       (if (= "new" (:id route-params))
-         (contacts/new-contact-form)
+       (condp = (:id route-params)
+         "new" (contacts/new-contact-form)
+         "count" (contacts/count-contacts)
          (contacts/view-contact req)))
   (DELETE "/contacts/:id" [id] (contacts/delete-contact! id))
   (GET "/contacts/:id/edit" [id] (contacts/edit-contact-form id))
