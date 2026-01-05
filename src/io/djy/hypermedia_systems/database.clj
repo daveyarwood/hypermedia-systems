@@ -5,7 +5,7 @@
 
 (defn- simulate-db-delay
   [& [amount]]
-  (Thread/sleep (or amount 500)))
+  (Thread/sleep (or amount 200)))
 
 ;; If this were a real system, we'd be querying a database.
 (def ^:private fake-contacts
@@ -66,12 +66,13 @@
            existing-contact))
        %)))
 
-(defn delete-contact!
-  [id]
+(defn delete-contacts!
+  [ids]
   (simulate-db-delay)
   (swap!
     fake-contacts
-    #(filter
-       (fn [{contact-id "id"}]
-         (not= id contact-id))
-       %)))
+    (fn [contacts]
+      (filter
+        (fn [{contact-id "id"}]
+          (not-any? #(= % contact-id) ids))
+        contacts))))

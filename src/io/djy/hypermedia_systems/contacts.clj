@@ -47,6 +47,8 @@
     (concat
       (for [{:strs [id first-name last-name phone email]} contacts]
         [:tr
+         [:td
+          [:input {:type "checkbox" :name "selected-contact-ids" :value id}]]
          [:td first-name]
          [:td last-name]
          [:td phone]
@@ -86,6 +88,7 @@
   [:table
    [:thead
     [:tr
+     [:th] ; Checkbox column for bulk actions
      [:th "First Name"]
      [:th "Last Name"]
      [:th "Phone"]
@@ -112,7 +115,13 @@
             [:hr]))
         (search-form q)
         [:hr]
-        (contacts-table req contacts)
+        [:form
+         (contacts-table req contacts)
+         [:button
+          {:hx-delete  "/contacts"
+           :hx-confirm "Are you sure you want to delete the selected contacts?"
+           :hx-target  "body"}
+          "Delete Selected Contacts"]]
         [:hr]
         [:p
          [:a {:href "/contacts/new"} "Add Contact"]
@@ -290,7 +299,7 @@
   (let [{:strs [hx-trigger]} headers
         {:keys [id]}         route-params
         id                   (maybe-parse-long id)]
-    (db/delete-contact! id)
+    (db/delete-contacts! [id])
     (if (= "delete-button" hx-trigger)
       ;; "Edit Contact" page:
       ;; Redirect back to the contact list page with a flash message
@@ -300,3 +309,11 @@
       ;; "List Contacts" page:
       ;; Replace the contact row with nothing, i.e. remove it
       "")))
+
+(defn delete-contacts!
+  [{:keys [query-params]}]
+  (let [ids (map maybe-parse-long (get query-params "selected-contact-ids"))]
+    (db/delete-contacts! ids)
+    (merge
+      (res/redirect "/contacts" :see-other)
+      {:flash (format "Deleted %d contacts successfully." (count ids))})))

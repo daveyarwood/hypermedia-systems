@@ -13,6 +13,7 @@
 (defroutes app
   (GET "/" _req (res/redirect "/contacts"))
   (GET "/contacts" req (contacts/list-contacts req))
+  (DELETE "/contacts" req (contacts/delete-contacts! req))
   (GET "/contacts/:id"
        {:keys [route-params] :as req}
        (condp = (:id route-params)
