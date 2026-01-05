@@ -19,7 +19,7 @@
          "new" (contacts/new-contact-form)
          "count" (contacts/count-contacts)
          (contacts/view-contact req)))
-  (DELETE "/contacts/:id" [id] (contacts/delete-contact! id))
+  (DELETE "/contacts/:id" req (contacts/delete-contact! req))
   (GET "/contacts/:id/edit" [id] (contacts/edit-contact-form id))
   (POST "/contacts/:id/edit" req (contacts/edit-contact! req))
   (GET "/contacts/:id/validate-email" req (contacts/validate-email req))

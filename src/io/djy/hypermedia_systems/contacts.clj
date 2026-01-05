@@ -54,7 +54,14 @@
          [:td
           [:a {:href (format "/contacts/%d/edit" id)} "Edit"]
           " "
-          [:a {:href (format "/contacts/%d" id)} "View"]]])
+          [:a {:href (format "/contacts/%d" id)} "View"]
+          " "
+          [:a
+           {:href       "#"
+            :hx-delete  (format "/contacts/%d" id)
+            :hx-target  "closest tr"
+            :hx-confirm "Are you sure you want to delete this contact?"}
+           "Delete"]]])
       (when (= db/page-size (count contacts))
         (list
           [:tr]
@@ -250,7 +257,8 @@
       [:h1 "Edit Contact"]
       (contact-form (format "/contacts/%d/edit" id) form-state)
       [:button
-       {:hx-delete   (format "/contacts/%d" id)
+       {:id          "delete-button"
+        :hx-delete   (format "/contacts/%d" id)
         :hx-target   "body"
         :hx-push-url "true"
         :hx-confirm  "Are you sure you want to delete this contact?"}
@@ -277,9 +285,17 @@
           {:flash "Contact updated successfully."})))))
 
 (defn delete-contact!
-  [id]
-  (let [id (maybe-parse-long id)]
+  [{:keys [headers route-params]}]
+  (let [{:strs [hx-trigger]} headers
+        {:keys [id]}         route-params
+        id                   (maybe-parse-long id)]
     (db/delete-contact! id)
-    (merge
-      (res/redirect "/contacts" :see-other)
-      {:flash "Contact deleted successfully."})))
+    (if (= "delete-button" hx-trigger)
+      ;; "Edit Contact" page:
+      ;; Redirect back to the contact list page with a flash message
+      (merge
+        (res/redirect "/contacts" :see-other)
+        {:flash "Contact deleted successfully."})
+      ;; "List Contacts" page:
+      ;; Replace the contact row with nothing, i.e. remove it
+      "")))
