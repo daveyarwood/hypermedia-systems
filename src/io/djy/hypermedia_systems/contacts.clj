@@ -1,6 +1,7 @@
 (ns io.djy.hypermedia-systems.contacts
   (:require
     [clojure.string                     :as str]
+    [io.djy.hypermedia-systems.archive  :as archive]
     [io.djy.hypermedia-systems.database :as db]
     [io.djy.hypermedia-systems.layout   :as layout]
     [ring.util.codec                    :as codec]
@@ -114,6 +115,8 @@
             [:em {:class "flash"} flash]
             [:hr]))
         (search-form q)
+        [:hr]
+        (archive/archive-ui req)
         [:hr]
         [:form
          (contacts-table req contacts)
