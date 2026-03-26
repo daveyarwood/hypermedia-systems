@@ -66,8 +66,9 @@
        [:div
         [:a
          {:hx-boost "false"
-          :href     "/contacts/archive/file"}
-         "Archive Ready! Click here to download. ↓"]
+          :href     "/contacts/archive/file"
+          :_        "on load click() me"}
+         "Archive Downloading! Click here if the download does not start."]
         [:button
          {:hx-delete "/contacts/archive/file"}
          "Clear Download"]])]))
