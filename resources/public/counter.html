@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Counter</title>
-  <script src="js/counter.js" defer></script>
+  <script src="js/alpine-3.15.11.min.js" defer></script>
 </head>
 <body>
-  <section class="counter" data-counter>
-    <output id="my-output" data-counter-output>0</output>
-    <button class="increment-btn" data-counter-increment>Increment</button>
-  </section>
+  <div x-data = "{ count: 0 }">
+    <output x-text="count"></output>
+    <button x-on:click="count++">Increment</button>
+  </div>
 </body>
 </html>
