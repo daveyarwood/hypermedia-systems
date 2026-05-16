@@ -41,6 +41,35 @@ const overflowMenu = (tree = document) => {
       }
     };
     window.addEventListener("click", clickAway);
+
+    // Keyboard interactions for dropdown menu
+    const currentIndex = () => {
+      const i = items.indexOf(document.activeElement);
+      return i == -1 ? 0 : i;
+    };
+    menu.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case "ArrowUp":
+          items[currentIndex() - 1]?.focus();
+          break;
+        case "ArrowDown":
+          items[currentIndex() + 1]?.focus();
+          break;
+        case "Space":
+          items[currentIndex()].click();
+          break;
+        case "Home":
+          items[0].focus();
+          break;
+        case "End":
+          items[items.length - 1].focus();
+          break;
+        case "Escape":
+          toggleMenu(false);
+          button.focus();
+          break;
+      }
+    });
   });
 };
 
