@@ -69,15 +69,15 @@
              "Edit"]
             [:a
              {:role "menuitem" :href (format "/contacts/%d" id)}
-             "View"]]]]
-         [:td
-          [:a
-           {:href       "#"
-            :hx-delete  (format "/contacts/%d" id)
-            :hx-target  "closest tr"
-            :hx-swap    "outerHTML swap:1s"
-            :hx-confirm "Are you sure you want to delete this contact?"}
-           "Delete"]]])
+             "View"]
+            [:a
+             {:role       "menuitem"
+              :href       "#"
+              :hx-delete  (format "/contacts/%d" id)
+              :hx-target  "closest tr"
+              :hx-swap    "outerHTML swap:1s"
+              :hx-confirm "Are you sure you want to delete this contact?"}
+             "Delete"]]]]])
       (when (= db/page-size (count contacts))
         (list
           [:tr]
