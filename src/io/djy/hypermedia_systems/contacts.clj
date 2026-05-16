@@ -55,10 +55,22 @@
          [:td phone]
          [:td email]
          [:td
-          [:a {:href (format "/contacts/%d/edit" id)} "Edit"]
-          " "
-          [:a {:href (format "/contacts/%d" id)} "View"]
-          " "
+          [:div
+           {"data-overflow-menu" true}
+           [:button
+            {:type          "button"
+             :aria-haspopup "menu"
+             :aria-controls (str "contact-menu-" id)}
+            "Options"]
+           [:div
+            {:role "menu" :hidden true :id (str "contact-menu-" id)}
+            [:a
+             {:role "menuitem" :href (format "/contacts/%d/edit" id)}
+             "Edit"]
+            [:a
+             {:role "menuitem" :href (format "/contacts/%d" id)}
+             "View"]]]]
+         [:td
           [:a
            {:href       "#"
             :hx-delete  (format "/contacts/%d" id)
