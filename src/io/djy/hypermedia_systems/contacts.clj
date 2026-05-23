@@ -150,7 +150,7 @@
              Swal.fire({
                        title: 'Delete these contacts?',
                        showCancelButton: true,
-                       confimButtonText: 'Delete'
+                       confirmButtonText: 'Delete'
                        }).then((result) => {
                        if (result.isConfirmed) {
                        htmx.ajax('DELETE', '/contacts', {
