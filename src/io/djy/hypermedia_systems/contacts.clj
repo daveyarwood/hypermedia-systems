@@ -147,9 +147,17 @@
             {:type  "button"
              :class "bad bg color border"
              "@click" "
-             confirm(`Delete ${selected.length} contacts?`) &&
-                       htmx.ajax('DELETE', '/contacts',
-                       { source: $root, target: document.body })
+             Swal.fire({
+                       title: 'Delete these contacts?',
+                       showCancelButton: true,
+                       confimButtonText: 'Delete'
+                       }).then((result) => {
+                       if (result.isConfirmed) {
+                       htmx.ajax('DELETE', '/contacts', {
+                       source: $root, target: document.body
+                       });
+                       }
+                       });
                        "}
             "Delete"]
            [:hr {:aria-orientation "vertical"}]
