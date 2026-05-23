@@ -18,6 +18,6 @@
      [:link {:rel "stylesheet" :href "/css/style.css"}]
      [:script {:src "/js/htmx-2.0.8.min.js"}]
      [:script {:src "/js/_hyperscript-0.9.14.min.js"}]
-     [:script {:src "/js/alpine-3.15.11.min.js"}]
+     [:script {:src "/js/alpine-3.15.11.min.js" :defer true}]
      [:script {:src "/js/main.js"}]]
     [:body {:hx-boost "true"} content]))

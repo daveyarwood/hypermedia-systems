@@ -137,21 +137,27 @@
         [:hr]
         [:form
          {:x-data "{ selected: [] }"}
-         (contacts-table req contacts)
          [:template
           {:x-if "selected.length > 0"}
           [:div
            {:class "box info tool-bar"}
            [:slot {:x-text "selected.length"}]
            "contacts selected"
-           [:button {:type "button" :class "bad bg color border"} "Delete"]
+           [:button
+            {:type  "button"
+             :class "bad bg color border"
+             "@click" "
+             confirm(`Delete ${selected.length} contacts?`) &&
+                       htmx.ajax('DELETE', '/contacts',
+                       { source: $root, target: document.body })
+                       "}
+            "Delete"]
            [:hr {:aria-orientation "vertical"}]
-           [:button {:type "button"} "Cancel"]]]
-         [:button
-          {:hx-delete  "/contacts"
-           :hx-confirm "Are you sure you want to delete the selected contacts?"
-           :hx-target  "body"}
-          "Delete Selected Contacts"]]
+           [:button
+            {:type    "button"
+             "@click" "selected = []"}
+            "Cancel"]]]
+         (contacts-table req contacts)]
         [:hr]
         [:p
          [:a {:href "/contacts/new"} "Add Contact"]
