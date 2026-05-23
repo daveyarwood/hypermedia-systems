@@ -28,7 +28,7 @@
 (defn- search-form
   [q]
   [:form {:action "/contacts" :method "get" :class "tool-bar"}
-   [:label {:for "search"} "Search Term"]
+   [:label {:for "search"} "Search Contacts"]
    [:input
     {:id           "search"
      :type         "search"
@@ -38,7 +38,8 @@
      :hx-trigger   "search, keyup delay:200ms changed"
      :hx-target    "tbody"
      :hx-push-url  "true"
-     :hx-indicator "#spinner"}]
+     :hx-indicator "#spinner"
+     :_ "on keydown[altKey and code is 'KeyS'] from the window focus() me"}]
    spinner
    [:input {:type "submit" :value "Search"}]])
 
