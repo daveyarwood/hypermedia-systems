@@ -144,16 +144,21 @@
            [:slot {:x-text "selected.length"}]
            "contacts selected"
            [:button
-            {:type       "button"
-             :class      "bad bg color border"
-             "@click"    "sweetConfirm($el, {
-                          title: 'Delete these contacts?',
-                          showCancelButton: true,
-                          confirmButtonText: 'Delete',
-                          })"
-             :hx-trigger "confirmed"
-             :hx-delete  "/contacts"
-             :hx-target  "body"}
+            {:type  "button"
+             :class "bad bg color border"
+             "@click" "
+             Swal.fire({
+                       title: 'Delete these contacts?',
+                       showCancelButton: true,
+                       confimButtonText: 'Delete'
+                       }).then((result) => {
+                       if (result.isConfirmed) {
+                       htmx.ajax('DELETE', '/contacts', {
+                       source: $root, target: document.body
+                       });
+                       }
+                       });
+                       "}
             "Delete"]
            [:hr {:aria-orientation "vertical"}]
            [:button
