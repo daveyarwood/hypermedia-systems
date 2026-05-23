@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Counter</title>
-  <script src="js/alpine-3.15.11.min.js" defer></script>
+  <script src="js/_hyperscript-0.9.14.min.js" defer></script>
 </head>
 <body>
-  <div x-data = "{ count: 0 }">
-    <output x-text="count"></output>
-    <button x-on:click="count++">Increment</button>
+  <div class="counter">
+    <output>0</output>
+    <button _="on click
+    increment the textContent of the previous <output/>">Increment</button>
   </div>
 </body>
 </html>
