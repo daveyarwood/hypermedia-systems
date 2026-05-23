@@ -74,3 +74,11 @@ const overflowMenu = (tree = document) => {
 };
 
 addEventListener("htmx:load", (e) => overflowMenu(e.target));
+
+window.sweetConfirm = (el, config) => {
+  Swal.fire(config).then(({ isConfirmed }) => {
+    if (isConfirmed) {
+      el.dispatchEvent(new Event("confirmed"));
+    }
+  });
+};
