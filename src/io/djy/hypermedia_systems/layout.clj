@@ -14,6 +14,7 @@
     [:head
      [:meta {:charset "utf-8"}]
      [:title "Contact.app"]
+     [:link {:rel "stylesheet" :href "/css/missing-1.3.0.css"}]
      [:link {:rel "stylesheet" :href "/css/style.css"}]
      [:script {:src "/js/htmx-2.0.8.min.js"}]
      [:script {:src "/js/_hyperscript-0.9.14.min.js"}]
